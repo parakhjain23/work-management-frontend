@@ -4,13 +4,15 @@ import {
     LayoutDashboard,
     CheckSquare,
     FolderOpen,
-    Plus
+    Plus,
+    Users
 } from 'lucide-react';
 import Link from 'next/link';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
     { icon: FolderOpen, label: 'Categories', href: '/categories' },
+    { icon: Users, label: 'Members', href: '/members' },
 ];
 
 export function Sidebar() {

@@ -1,8 +1,14 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { QuickAIInput } from '@/components/features/ai/QuickAIInput';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isDashboard = pathname === '/';
+
     return (
         <div className="flex h-screen bg-base-100 overflow-hidden relative">
             <div className="hidden lg:block h-full">
@@ -16,7 +22,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </main>
             </div>
-            <QuickAIInput />
+            {isDashboard && <QuickAIInput />}
         </div>
     );
 }

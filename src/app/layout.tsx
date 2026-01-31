@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Modern work management platform for teams",
 };
 
+import { Toaster } from 'react-hot-toast';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-base-100 text-base-content`}
       >
         <ReduxProvider>
+          <Toaster position="top-right" />
           {children}
         </ReduxProvider>
       </body>
