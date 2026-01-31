@@ -1,139 +1,7 @@
 'use client';
 
-import { WorkItem } from '@/types/work-item';
 import { Clock, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
-
-// Dummy work items data
-const dummyWorkItems: WorkItem[] = [
-    {
-        id: '1',
-        title: 'Design System Implementation',
-        description: 'Create a comprehensive design system with reusable components and style guidelines.',
-        status: 'IN_PROGRESS',
-        priority: 'HIGH',
-        assigneeId: '1',
-        assignee: {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah@workflow.com',
-        },
-        creatorId: '1',
-        creator: {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah@workflow.com',
-        },
-        createdAt: new Date('2026-01-15').toISOString(),
-        updatedAt: new Date('2026-01-25').toISOString(),
-    },
-    {
-        id: '2',
-        title: 'API Documentation',
-        description: 'Write comprehensive API documentation for all endpoints with examples and use cases.',
-        status: 'TODO',
-        priority: 'MEDIUM',
-        assigneeId: '2',
-        assignee: {
-            id: '2',
-            name: 'Mike Chen',
-            email: 'mike@workflow.com',
-        },
-        creatorId: '1',
-        creator: {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah@workflow.com',
-        },
-        createdAt: new Date('2026-01-20').toISOString(),
-        updatedAt: new Date('2026-01-20').toISOString(),
-    },
-    {
-        id: '3',
-        title: 'Database Migration',
-        description: 'Migrate legacy database to new PostgreSQL schema with zero downtime.',
-        status: 'DONE',
-        priority: 'URGENT',
-        assigneeId: '3',
-        assignee: {
-            id: '3',
-            name: 'Emma Davis',
-            email: 'emma@workflow.com',
-        },
-        creatorId: '2',
-        creator: {
-            id: '2',
-            name: 'Mike Chen',
-            email: 'mike@workflow.com',
-        },
-        createdAt: new Date('2026-01-10').toISOString(),
-        updatedAt: new Date('2026-01-28').toISOString(),
-    },
-    {
-        id: '4',
-        title: 'User Authentication Refactor',
-        description: 'Refactor authentication system to support OAuth2.0 and multi-factor authentication.',
-        status: 'IN_PROGRESS',
-        priority: 'HIGH',
-        assigneeId: '1',
-        assignee: {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah@workflow.com',
-        },
-        creatorId: '3',
-        creator: {
-            id: '3',
-            name: 'Emma Davis',
-            email: 'emma@workflow.com',
-        },
-        createdAt: new Date('2026-01-22').toISOString(),
-        updatedAt: new Date('2026-01-30').toISOString(),
-    },
-    {
-        id: '5',
-        title: 'Performance Optimization',
-        description: 'Optimize application performance by implementing caching and lazy loading.',
-        status: 'TODO',
-        priority: 'LOW',
-        assigneeId: '2',
-        assignee: {
-            id: '2',
-            name: 'Mike Chen',
-            email: 'mike@workflow.com',
-        },
-        creatorId: '1',
-        creator: {
-            id: '1',
-            name: 'Sarah Johnson',
-            email: 'sarah@workflow.com',
-        },
-        createdAt: new Date('2026-01-18').toISOString(),
-        updatedAt: new Date('2026-01-18').toISOString(),
-    },
-    {
-        id: '6',
-        title: 'Mobile Responsive Design',
-        description: 'Ensure all pages are fully responsive and optimized for mobile devices.',
-        status: 'DONE',
-        priority: 'MEDIUM',
-        assigneeId: '3',
-        assignee: {
-            id: '3',
-            name: 'Emma Davis',
-            email: 'emma@workflow.com',
-        },
-        creatorId: '2',
-        creator: {
-            id: '2',
-            name: 'Mike Chen',
-            email: 'mike@workflow.com',
-        },
-        createdAt: new Date('2026-01-12').toISOString(),
-        updatedAt: new Date('2026-01-29').toISOString(),
-    },
-];
-
 import { useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -162,7 +30,7 @@ export function WorkItemList() {
     return (
         <div className="flex flex-col gap-1 page-fade-in">
             <div className="hidden md:flex items-center px-6 py-4 text-[10px] font-black uppercase tracking-widest text-base-content/20 border-b border-base-200/50 mb-2">
-                <div className="flex-[2]">Work Item</div>
+                <div className="flex-2">Work Item</div>
                 <div className="flex-1">Status</div>
                 <div className="flex-1">Priority</div>
                 <div className="flex-1">Assignee</div>
@@ -176,7 +44,7 @@ export function WorkItemList() {
                         className="group flex flex-col md:flex-row md:items-center gap-4 bg-base-100 hover:bg-base-200/50 p-4 md:px-6 md:py-4 rounded-2xl border border-base-200 transition-all duration-200 hover:shadow-lg hover:shadow-base-300/10 active:scale-[0.99]"
                     >
                         {/* Title & Description */}
-                        <div className="flex-[2] min-w-0">
+                        <div className="flex-2 min-w-0">
                             <h3 className="text-base font-bold text-base-content group-hover:text-primary transition-colors truncate">
                                 {item.title}
                             </h3>

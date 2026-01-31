@@ -1,9 +1,10 @@
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
+import { QuickAIInput } from '@/components/features/ai/QuickAIInput';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex h-screen bg-base-100 overflow-hidden">
+        <div className="flex h-screen bg-base-100 overflow-hidden relative">
             <div className="hidden lg:block h-full">
                 <Sidebar />
             </div>
@@ -15,6 +16,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </main>
             </div>
+            <QuickAIInput />
         </div>
     );
 }

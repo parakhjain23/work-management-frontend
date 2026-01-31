@@ -15,8 +15,6 @@ export function QuickAIInput() {
         try {
             await createWorkItem({
                 title: input,
-                status: 'TODO',
-                priority: 'MEDIUM',
                 description: 'Created via AI Assistant',
             }).unwrap();
             setInput('');
@@ -28,7 +26,7 @@ export function QuickAIInput() {
     return (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 z-50">
             <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-2xl blur opacity-25 group-focus-within:opacity-100 transition duration-1000 group-focus-within:duration-200"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-secondary/20 rounded-2xl blur opacity-25 group-focus-within:opacity-100 transition duration-1000 group-focus-within:duration-200"></div>
                 <form
                     onSubmit={handleSubmit}
                     className="relative bg-base-100/70 backdrop-blur-2xl border border-base-200/50 rounded-2xl shadow-2xl p-2 flex items-center gap-3 transition-all duration-300 ring-1 ring-white/10"
@@ -59,12 +57,11 @@ export function QuickAIInput() {
                     </button>
                 </form>
             </div>
-
             <div className="mt-3 text-center">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-base-content/10 flex items-center justify-center gap-3">
-                    <span className="w-8 h-[1px] bg-base-content/5"></span>
+                    <span className="w-8 h-px bg-base-content/5"></span>
                     Workflow Intelligent Assistant
-                    <span className="w-8 h-[1px] bg-base-content/5"></span>
+                    <span className="w-8 h-px bg-base-content/5"></span>
                 </p>
             </div>
         </div>
