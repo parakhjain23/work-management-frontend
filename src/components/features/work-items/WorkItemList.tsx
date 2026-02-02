@@ -72,12 +72,14 @@ export function WorkItemList({ categoryId }: WorkItemListProps) {
                         <div className="flex-1 flex items-center">
                             <div className={cn(
                                 "flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                                item.status === 'DONE' ? 'bg-success/10 text-success border-success/20' :
-                                    item.status === 'IN_PROGRESS' ? 'bg-primary/10 text-primary border-primary/20' :
-                                        'bg-base-200 text-base-content/40 border-base-300'
+                                item.status === 'CLOSED' || item.status === 'ARCHIVED' ? 'bg-success/10 text-success border-success/20' :
+                                    item.status === 'IN_PROGRESS' || item.status === 'IN_REVIEW' ? 'bg-primary/10 text-primary border-primary/20' :
+                                        item.status === 'DECIDED' || item.status === 'THINKING' ? 'bg-info/10 text-info border-info/20' :
+                                            'bg-base-200 text-base-content/40 border-base-300'
                             )}>
-                                {item.status === 'DONE' ? <CheckCircle2 size={12} strokeWidth={3} /> :
-                                    item.status === 'IN_PROGRESS' ? <Clock size={12} strokeWidth={3} /> : <AlertTriangle size={12} strokeWidth={3} />}
+                                {item.status === 'CLOSED' ? <CheckCircle2 size={12} strokeWidth={3} /> :
+                                    item.status === 'IN_PROGRESS' || item.status === 'IN_REVIEW' ? <Clock size={12} strokeWidth={3} /> :
+                                        <AlertTriangle size={12} strokeWidth={3} />}
                                 {item.status}
                             </div>
                         </div>

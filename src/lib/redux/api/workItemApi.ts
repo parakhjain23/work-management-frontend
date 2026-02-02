@@ -25,6 +25,11 @@ export const workItemApi = createApi({
             transformResponse: (response: ApiResponse<WorkItem>) => response.data,
             providesTags: (_result, _error, id) => [{ type: 'WorkItem', id }],
         }),
+        getWorkItemFullData: builder.query<WorkItem, string>({
+            query: (id) => `/work-items/${id}/full-data`,
+            transformResponse: (response: ApiResponse<WorkItem>) => response.data,
+            providesTags: (_result, _error, id) => [{ type: 'WorkItem', id: `FULL_${id}` }],
+        }),
         createWorkItem: builder.mutation<WorkItem, Partial<WorkItem>>({
             query: (body) => ({
                 url: '/work-items',
@@ -55,6 +60,7 @@ export const {
     useGetWorkItemsQuery,
     useGetWorkItemsByCategoryQuery,
     useGetWorkItemQuery,
+    useGetWorkItemFullDataQuery,
     useCreateWorkItemMutation,
     useUpdateWorkItemMutation,
     useDeleteWorkItemMutation,

@@ -1,4 +1,4 @@
-export type WorkItemStatus = 'TODO' | 'IN_PROGRESS' | 'DONE' | 'BACKLOG';
+export type WorkItemStatus = 'CAPTURED' | 'CLARIFYING' | 'THINKING' | 'DECIDED' | 'IN_PROGRESS' | 'IN_REVIEW' | 'CLOSED' | 'ARCHIVED';
 export type WorkItemPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
 
 export interface User {

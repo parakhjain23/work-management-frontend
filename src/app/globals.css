@@ -55,3 +55,8 @@ body {
 .card-premium {
   @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-base-200 hover:border-primary/20;
 }
+
+/* Fix transparent dropdown options */
+select option {
+  @apply bg-base-100 text-base-content;
+}

@@ -46,7 +46,7 @@ export function Navbar() {
                             />
                         </div>
                     </div>
-                    <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-64 border border-base-200">
+                    <ul tabIndex={0} className="mt-3 z-1 p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-64 border border-base-200">
                         <div className="px-4 py-3 border-b border-base-200 mb-2">
                             <p className="font-bold text-base-content">{userData?.name || 'Felix Jaehn'}</p>
                             <p className="text-xs text-base-content/60 truncate">{userData?.email || 'admin@workflow.com'}</p>
