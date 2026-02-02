@@ -5,9 +5,10 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { closeSidebar } from '@/lib/redux/features/uiSlice';
 import { RootState } from '@/lib/redux/store';
 import { cn } from '@/lib/utils/cn';
-import { AlertTriangle, AlignLeft, Calendar, CheckCircle2, Clock, Hash, Info, User, X } from 'lucide-react';
+import { AlertTriangle, AlignLeft, Calendar, CheckCircle2, Clock, Hash, Info, User, X, Tag } from 'lucide-react';
 import { ChatbotEmbed } from '../ai/ChatbotEmbed';
 import { useUpdateWorkItemMutation, useGetWorkItemFullDataQuery } from '@/lib/redux/api/workItemApi';
+import { useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
 import { WorkItemStatus, WorkItemPriority } from '@/types/work-item';
 import toast from 'react-hot-toast';
 
@@ -20,6 +21,14 @@ export function WorkItemDetailsSidebar() {
         selectedWorkItem?.id as string,
         { skip: !selectedWorkItem?.id || !isSidebarOpen }
     );
+
+    // Use fullWorkItem if available, otherwise fallback to selectedWorkItem
+    const item = fullWorkItem || selectedWorkItem;
+
+    // Fetch category data if categoryId exists
+    const { data: categoryData } = useGetCategoryQuery(item?.categoryId as string, {
+        skip: !item?.categoryId,
+    });
 
     const [updateWorkItem, { isLoading: isUpdating }] = useUpdateWorkItemMutation();
 
@@ -41,9 +50,6 @@ export function WorkItemDetailsSidebar() {
 
     if (!selectedWorkItem) return null;
 
-    // Use fullWorkItem if available, otherwise fallback to selectedWorkItem
-    const item = fullWorkItem || selectedWorkItem;
-    console.log(item, 'fullitem details')
     const handleStatusChange = async (newStatus: WorkItemStatus) => {
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { status: newStatus } }).unwrap();
@@ -90,6 +96,25 @@ export function WorkItemDetailsSidebar() {
             toast.error('Failed to update description');
         }
     };
+
+    const handleCustomFieldUpdate = async (fieldKey: string, value: any) => {
+        try {
+            const currentCustomFields = item.customFieldValues || {};
+            await updateWorkItem({
+                id: selectedWorkItem.id,
+                body: {
+                    customFieldValues: {
+                        ...currentCustomFields,
+                        [fieldKey]: value
+                    }
+                }
+            }).unwrap();
+            toast.success('Field updated');
+        } catch (err) {
+            toast.error('Failed to update field');
+        }
+    };
+
 
     const statusOptions: { value: WorkItemStatus; label: string }[] = [
         { value: 'CAPTURED', label: 'Captured' },
@@ -229,6 +254,50 @@ export function WorkItemDetailsSidebar() {
                                     />
                                 </div>
                             </section>
+
+                            {/* Custom Fields Section */}
+                            {categoryData?.customFieldMetaData && categoryData.customFieldMetaData.length > 0 && (
+                                <section className="animate-in fade-in slide-in-from-bottom-5 duration-600">
+                                    <div className="flex items-center gap-2 mb-4 text-base-content/30">
+                                        <Tag size={16} strokeWidth={2.5} />
+                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">Custom Fields</h3>
+                                    </div>
+                                    <div className="bg-base-200/30 rounded-3xl p-6 border border-base-200/50 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {categoryData.customFieldMetaData.map((field) => {
+                                            const currentValue = item.customFieldValues?.[field.keyName] ?? '';
+                                            return (
+                                                <div key={field.id} className="flex flex-col gap-2">
+                                                    <label className="text-[10px] font-black uppercase tracking-widest text-base-content/40 pl-1">
+                                                        {field.name}
+                                                    </label>
+                                                    {field.enums ? (
+                                                        <select
+                                                            value={currentValue}
+                                                            onChange={(e) => handleCustomFieldUpdate(field.keyName, e.target.value)}
+                                                            className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
+                                                        >
+                                                            <option value="" disabled>Select {field.name}</option>
+                                                            {field.enums.split(',').map((opt) => (
+                                                                <option key={opt.trim()} value={opt.trim()}>
+                                                                    {opt.trim()}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    ) : (
+                                                        <input
+                                                            type={field.dataType === 'number' ? 'number' : 'text'}
+                                                            value={currentValue}
+                                                            onChange={(e) => handleCustomFieldUpdate(field.keyName, e.target.value)}
+                                                            className="input input-sm input-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
+                                                            placeholder={`Enter ${field.name}`}
+                                                        />
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </section>
+                            )}
 
                             {/* Details Grid */}
                             <section className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-6 duration-700">

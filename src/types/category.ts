@@ -8,6 +8,7 @@ export interface Category {
     updatedBy?: string;
     createdAt: string;
     updatedAt: string;
+    customFieldMetaData?: CustomField[];
 }
 
 export type DataType = 'number' | 'text' | 'boolean' | 'json';

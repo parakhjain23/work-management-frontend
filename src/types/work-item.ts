@@ -21,6 +21,8 @@ export interface WorkItem {
     createdAt: string;
     updatedAt: string;
     dueDate?: string;
+    categoryId?: string;
+    customFieldValues?: Record<string, any>;
 }
 
 export interface ApiResponse<T> {
