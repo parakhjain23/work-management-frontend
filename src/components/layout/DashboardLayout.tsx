@@ -7,7 +7,10 @@ import { QuickAIInput } from '@/components/features/ai/QuickAIInput';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isDashboard = pathname === '/';
+    // Only show QuickAIInput on the organization dashboard (root org page)
+    const segments = pathname.split('/');
+    const isDashboard = segments.length === 3 && segments[1] === 'org';
+
 
     return (
         <div className="flex h-screen bg-base-100 overflow-hidden relative">
@@ -26,3 +29,4 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
     );
 }
+

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "@/components/layout/ReduxProvider";
+import { Toaster } from 'react-hot-toast';
+import AppAuth from "@/components/layout/AppAuth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +20,6 @@ export const metadata: Metadata = {
   description: "Modern work management platform for teams",
 };
 
-import { Toaster } from 'react-hot-toast';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,8 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-base-100 text-base-content`}
       >
         <ReduxProvider>
-          <Toaster position="top-right" />
-          {children}
+          <AppAuth>
+            <Toaster position="top-right" />
+            {children}
+          </AppAuth>
         </ReduxProvider>
       </body>
     </html>
