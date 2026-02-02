@@ -55,8 +55,8 @@ export function Navbar() {
                                 {userData?.currentCompany?.name || 'No Company'}
                             </div>
                         </div>
-                        <li><Link href="/profile" className="py-2.5"><User size={16} /> Profile</Link></li>
-                        <li><Link href="/settings" className="py-2.5"><Settings size={16} /> Settings</Link></li>
+                        {/* <li><Link href="/profile" className="py-2.5"><User size={16} /> Profile</Link></li> */}
+                        <li><Link href={`/org/${userData?.currentCompany?.id}/settings`} className="py-2.5"><Settings size={16} /> Settings</Link></li>
                         <li><Link href="/" className="py-2.5"><Building2 size={16} /> Switch Organization</Link></li>
                         <div className="divider my-1"></div>
                         <li>

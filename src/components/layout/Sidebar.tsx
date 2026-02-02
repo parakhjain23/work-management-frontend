@@ -7,7 +7,8 @@ import {
     Plus,
     Users,
     ChevronLeft,
-    Tag
+    Tag,
+    Settings
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
@@ -23,6 +24,7 @@ export function Sidebar() {
         { icon: LayoutDashboard, label: 'Dashboard', href: `/org/${orgId}` },
         { icon: FolderOpen, label: 'Manage Categories', href: `/org/${orgId}/categories` },
         { icon: Users, label: 'Members', href: `/org/${orgId}/members` },
+        { icon: Settings, label: 'Settings', href: `/org/${orgId}/settings` },
     ];
 
     return (
