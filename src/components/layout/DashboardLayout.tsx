@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { QuickAIInput } from '@/components/features/ai/QuickAIInput';
+import { WorkItemDetailsSidebar } from '@/components/features/work-items/WorkItemDetailsSidebar';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -26,6 +27,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </main>
             </div>
             {isDashboard && <QuickAIInput />}
+            <WorkItemDetailsSidebar />
         </div>
     );
 }

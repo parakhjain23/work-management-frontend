@@ -1,7 +1,11 @@
-import { baseApi } from './baseApi';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { customFetchBaseQuery } from './interceptor';
 import { WorkItem, ApiResponse } from '@/types/work-item';
 
-export const workItemApi = baseApi.injectEndpoints({
+export const workItemApi = createApi({
+    reducerPath: 'workItemApi',
+    baseQuery: customFetchBaseQuery(`${process.env.NEXT_PUBLIC_API_URL}/`),
+    tagTypes: ['WorkItem'],
     endpoints: (builder) => ({
         getWorkItems: builder.query<WorkItem[], void>({
             query: () => '/work-items',
@@ -46,3 +50,4 @@ export const {
     useUpdateWorkItemMutation,
     useDeleteWorkItemMutation,
 } = workItemApi;
+

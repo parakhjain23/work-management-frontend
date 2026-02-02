@@ -13,7 +13,7 @@ export const customFetchBaseQuery = (baseUrl: string) => {
                     headers.set('proxy_auth_token', `${token}`);
                     headers.set('Content-Type', 'application/json');
                 }
-                if (process.env.NEXT_PUBLIC_NEXT_ENVIRONMENT === 'local') {
+                if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'local') {
                     // localStorage.getItem("proxy_auth_token");
                     headers.set('Authorization', process.env.NEXT_PUBLIC_TOKEN || '');
                 }

@@ -1,19 +1,24 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { baseApi } from './api/baseApi';
+import { embedApi } from './api/embedApi';
 import { orgsApi } from './api/orgApi';
+import { workItemApi } from './api/workItemApi';
+import { uiSlice } from './features/uiSlice';
 
 export const store = configureStore({
     reducer: {
         // Add the generated reducer as a specific top-level slice
-        [baseApi.reducerPath]: baseApi.reducer,
         [orgsApi.reducerPath]: orgsApi.reducer,
+        [workItemApi.reducerPath]: workItemApi.reducer,
+        [embedApi.reducerPath]: embedApi.reducer,
+        ui: uiSlice.reducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(baseApi.middleware, orgsApi.middleware),
+        getDefaultMiddleware().concat(orgsApi.middleware, workItemApi.middleware, embedApi.middleware),
 });
+
 
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

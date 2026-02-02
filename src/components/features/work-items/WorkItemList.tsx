@@ -1,12 +1,15 @@
 'use client';
 
-import { Clock, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
-import { useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { useAppDispatch } from '@/hooks/redux';
+import { useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
+import { selectWorkItem } from '@/lib/redux/features/uiSlice';
+import { cn } from '@/lib/utils/cn';
+import { AlertTriangle, Calendar, CheckCircle2, Clock } from 'lucide-react';
 
 export function WorkItemList() {
+    const dispatch = useAppDispatch();
     const { data: workItems, isLoading, isError, error, refetch } = useGetWorkItemsQuery();
 
     if (isLoading) {
@@ -41,7 +44,8 @@ export function WorkItemList() {
                 {workItems.map((item) => (
                     <div
                         key={item.id}
-                        className="group flex flex-col md:flex-row md:items-center gap-4 bg-base-100 hover:bg-base-200/50 p-4 md:px-6 md:py-4 rounded-2xl border border-base-200 transition-all duration-200 hover:shadow-lg hover:shadow-base-300/10 active:scale-[0.99]"
+                        onClick={() => dispatch(selectWorkItem(item))}
+                        className="group flex flex-col md:flex-row md:items-center gap-4 bg-base-100 hover:bg-base-200/50 p-4 md:px-6 md:py-4 rounded-2xl border border-base-200 transition-all duration-200 hover:shadow-lg hover:shadow-base-300/10 active:scale-[0.99] cursor-pointer"
                     >
                         {/* Title & Description */}
                         <div className="flex-2 min-w-0">
