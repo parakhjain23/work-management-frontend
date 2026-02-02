@@ -3,14 +3,25 @@
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { useAppDispatch } from '@/hooks/redux';
-import { useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
+import { useGetWorkItemsQuery, useGetWorkItemsByCategoryQuery } from '@/lib/redux/api/workItemApi';
 import { selectWorkItem } from '@/lib/redux/features/uiSlice';
 import { cn } from '@/lib/utils/cn';
 import { AlertTriangle, Calendar, CheckCircle2, Clock } from 'lucide-react';
 
-export function WorkItemList() {
+interface WorkItemListProps {
+    categoryId?: string;
+}
+
+export function WorkItemList({ categoryId }: WorkItemListProps) {
     const dispatch = useAppDispatch();
-    const { data: workItems, isLoading, isError, error, refetch } = useGetWorkItemsQuery();
+
+    // Conditional query based on categoryId presence
+    const allWorkItemsQuery = useGetWorkItemsQuery(undefined, { skip: !!categoryId });
+    const categoryWorkItemsQuery = useGetWorkItemsByCategoryQuery(categoryId as string, { skip: !categoryId });
+
+    const { data: workItems, isLoading, isError, error, refetch } = categoryId
+        ? categoryWorkItemsQuery
+        : allWorkItemsQuery;
 
     if (isLoading) {
         return (

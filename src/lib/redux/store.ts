@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { embedApi } from './api/embedApi';
 import { orgsApi } from './api/orgApi';
 import { workItemApi } from './api/workItemApi';
+import { categoryApi } from './api/categoryApi';
 import { uiSlice } from './features/uiSlice';
 
 export const store = configureStore({
@@ -11,12 +12,13 @@ export const store = configureStore({
         [orgsApi.reducerPath]: orgsApi.reducer,
         [workItemApi.reducerPath]: workItemApi.reducer,
         [embedApi.reducerPath]: embedApi.reducer,
+        [categoryApi.reducerPath]: categoryApi.reducer,
         ui: uiSlice.reducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(orgsApi.middleware, workItemApi.middleware, embedApi.middleware),
+        getDefaultMiddleware().concat(orgsApi.middleware, workItemApi.middleware, embedApi.middleware, categoryApi.middleware),
 });
 
 

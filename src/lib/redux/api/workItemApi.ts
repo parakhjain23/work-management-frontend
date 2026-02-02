@@ -12,6 +12,14 @@ export const workItemApi = createApi({
             transformResponse: (response: ApiResponse<WorkItem[]>) => response.data,
             providesTags: ['WorkItem'],
         }),
+        getWorkItemsByCategory: builder.query<WorkItem[], string>({
+            query: (categoryId) => `/categories/${categoryId}/work-items`,
+            transformResponse: (response: ApiResponse<WorkItem[]>) => response.data,
+            providesTags: (result, _error, categoryId) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'WorkItem' as const, id })), { type: 'WorkItem', id: `CATEGORY_${categoryId}` }]
+                    : [{ type: 'WorkItem', id: `CATEGORY_${categoryId}` }],
+        }),
         getWorkItem: builder.query<WorkItem, string>({
             query: (id) => `/work-items/${id}`,
             transformResponse: (response: ApiResponse<WorkItem>) => response.data,
@@ -45,6 +53,7 @@ export const workItemApi = createApi({
 
 export const {
     useGetWorkItemsQuery,
+    useGetWorkItemsByCategoryQuery,
     useGetWorkItemQuery,
     useCreateWorkItemMutation,
     useUpdateWorkItemMutation,
