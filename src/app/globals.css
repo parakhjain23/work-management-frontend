@@ -15,6 +15,10 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   @apply min-h-screen bg-base-100 text-base-content;
   font-family: var(--font-sans), system-ui, sans-serif;

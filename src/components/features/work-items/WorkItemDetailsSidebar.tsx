@@ -26,8 +26,7 @@ export function WorkItemDetailsSidebar() {
 
     // Use fullWorkItem if available, otherwise fallback to selectedWorkItem
     const item = fullWorkItem || selectedWorkItem;
-    console.log(item, 'item')
-
+    console.log(item?.priority, 'priority')
     // Fetch category data if categoryId exists
     const { data: categoryData } = useGetCategoryQuery(item?.categoryId as string, {
         skip: !item?.categoryId,
@@ -60,6 +59,7 @@ export function WorkItemDetailsSidebar() {
     if (!item) return null;
 
     const handleStatusChange = async (newStatus: WorkItemStatus) => {
+        if (!selectedWorkItem || newStatus === item?.status) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { status: newStatus } }).unwrap();
             toast.success('Status updated');
@@ -69,6 +69,8 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handlePriorityChange = async (newPriority: WorkItemPriority) => {
+        console.log(newPriority, 'newPriority', item?.priority, 'item.priority')
+        if (!selectedWorkItem || newPriority === item?.priority) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { priority: newPriority } }).unwrap();
             toast.success('Priority updated');
@@ -78,6 +80,10 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleDueDateChange = async (newDueDate: string) => {
+        if (!selectedWorkItem) return;
+        const currentDueDate = item?.dueDate ? new Date(item.dueDate).toISOString().split('T')[0] : '';
+        if (newDueDate === currentDueDate) return;
+
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { dueDate: newDueDate } }).unwrap();
             toast.success('Due date updated');
@@ -87,6 +93,7 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleCategoryChange = async (newCategoryId: string) => {
+        if (!selectedWorkItem || newCategoryId === String(item?.categoryId)) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { categoryId: newCategoryId } }).unwrap();
             toast.success('Category updated');
@@ -96,7 +103,7 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleTitleUpdate = async () => {
-        if (!selectedWorkItem || !selectedWorkItem.title || localTitle === selectedWorkItem.title) return;
+        if (!selectedWorkItem || !localTitle || localTitle === item?.title) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { title: localTitle } }).unwrap();
             toast.success('Title updated');
@@ -106,7 +113,7 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleDescriptionUpdate = async () => {
-        if (!selectedWorkItem || localDescription === selectedWorkItem.description || !localDescription) return;
+        if (!selectedWorkItem || localDescription === item?.description) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { description: localDescription } }).unwrap();
             toast.success('Description updated');
@@ -117,6 +124,14 @@ export function WorkItemDetailsSidebar() {
 
 
     const handleCustomFieldUpdate = async (fieldId: string, value: any, dataType: string) => {
+        if (!selectedWorkItem) return;
+        const fieldKey = categoryData?.customFieldMetaData?.find(f => f.id === fieldId)?.keyName;
+        if (fieldKey) {
+            const currentValue = item?.customFields?.[fieldKey] ?? item?.customFieldValues?.[fieldKey];
+            // Simple equality check; for precise number/string matching might need adjustments
+            if (value == currentValue) return;
+        }
+
         try {
             await setCustomFieldValue({
                 workItemId: selectedWorkItem.id,
@@ -130,6 +145,7 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleAssigneeUpdate = async (assigneeId: string) => {
+        if (!selectedWorkItem || assigneeId === String(item?.assigneeId)) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { assigneeId } }).unwrap();
             toast.success('Assignee updated');
@@ -245,6 +261,7 @@ export function WorkItemDetailsSidebar() {
                                             onChange={(e) => handleStatusChange(e.target.value as WorkItemStatus)}
                                             className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-200/50 border-transparent focus:border-primary transition-all w-36"
                                         >
+                                            <option value="" disabled hidden>Select Status</option>
                                             {statusOptions.map(opt => (
                                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
                                             ))}
@@ -259,6 +276,7 @@ export function WorkItemDetailsSidebar() {
                                             onChange={(e) => handlePriorityChange(e.target.value as WorkItemPriority)}
                                             className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-200/50 border-transparent focus:border-primary transition-all w-32"
                                         >
+                                            <option value="" disabled hidden>Select Priority</option>
                                             {priorityOptions.map(opt => (
                                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
                                             ))}
@@ -288,7 +306,7 @@ export function WorkItemDetailsSidebar() {
                                             onChange={(e) => handleCategoryChange(e.target.value)}
                                             className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-200/50 border-transparent focus:border-primary transition-all w-40"
                                         >
-                                            <option value="" disabled>Select Category</option>
+                                            <option value="" disabled hidden>Select Category</option>
                                             {allCategories?.map(cat => (
                                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                                             ))}
@@ -318,7 +336,7 @@ export function WorkItemDetailsSidebar() {
                                                             onChange={(e) => handleCustomFieldUpdate(field.id, e.target.value, field.dataType)}
                                                             className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
                                                         >
-                                                            <option value="" disabled>Select {field.name}</option>
+                                                            <option value="" disabled hidden>Select {field.name}</option>
                                                             {field.enums.split(',').map((opt) => (
                                                                 <option key={opt.trim()} value={opt.trim()}>
                                                                     {opt.trim()}

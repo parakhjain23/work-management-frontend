@@ -1,7 +1,5 @@
-'use client';
-
 import { useCreateCategoryMutation } from '@/lib/redux/api/categoryApi';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { X } from 'lucide-react';
 
@@ -11,12 +9,19 @@ interface AddCategoryModalProps {
 }
 
 export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
     const [createCategory, { isLoading }] = useCreateCategoryMutation();
     const [formData, setFormData] = useState({
         name: '',
         keyName: '',
         externalTool: ''
     });
+
+    useEffect(() => {
+        if (!dialogRef.current?.open) {
+            dialogRef.current?.showModal();
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,11 +35,9 @@ export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-base-100 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-base-200">
+        <dialog ref={dialogRef} className="modal" onClose={onClose}>
+            <div className="modal-box bg-base-100 rounded-3xl shadow-2xl border border-base-200 p-0 max-w-md">
                 <div className="flex justify-between items-center p-6 border-b border-base-200">
                     <h3 className="text-xl font-bold">Add New Category</h3>
                     <button onClick={onClose} className="btn btn-ghost btn-sm btn-square rounded-xl">
@@ -96,6 +99,9 @@ export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
                     </div>
                 </form>
             </div>
-        </div>
+            <form method="dialog" className="modal-backdrop">
+                <button onClick={onClose}>close</button>
+            </form>
+        </dialog>
     );
 }

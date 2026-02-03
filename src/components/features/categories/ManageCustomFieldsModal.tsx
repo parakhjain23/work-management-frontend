@@ -1,23 +1,23 @@
 'use client';
-
 import {
-    useGetCustomFieldsByCategoryQuery,
+    useCreateCustomFieldMutation,
     useDeleteCustomFieldMutation,
-    useCreateCustomFieldMutation
+    useGetCategoriesQuery
 } from '@/lib/redux/api/categoryApi';
 import { Category, DataType } from '@/types/category';
-import { X, Plus, Trash2, Tag, Info } from 'lucide-react';
-import { useState } from 'react';
+import { Info, Plus, Tag, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface ManageCustomFieldsModalProps {
     category: Category;
-    isOpen: boolean;
     onClose: () => void;
 }
 
-export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCustomFieldsModalProps) {
-    const { data: fields, isLoading } = useGetCustomFieldsByCategoryQuery(category.id);
+export function ManageCustomFieldsModal({ category, onClose }: ManageCustomFieldsModalProps) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const { data: categories, isLoading } = useGetCategoriesQuery();
+    const fields = categories?.find((c) => c.id === category.id)?.customFieldMetaData;
     const [deleteField] = useDeleteCustomFieldMutation();
     const [createField, { isLoading: isCreating }] = useCreateCustomFieldMutation();
 
@@ -29,6 +29,12 @@ export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCus
         description: '',
         enums: ''
     });
+
+    useEffect(() => {
+        if (!dialogRef.current?.open) {
+            dialogRef.current?.showModal();
+        }
+    }, []);
 
     const handleDelete = async (fieldId: string) => {
         if (confirm('Are you sure you want to remove this custom field?')) {
@@ -56,11 +62,9 @@ export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCus
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-base-100 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-base-200 flex flex-col max-h-[90vh]">
+        <dialog ref={dialogRef} className="modal" onClose={onClose}>
+            <div className="modal-box w-11/12 max-w-2xl bg-base-100 rounded-3xl shadow-2xl border border-base-200 p-0 flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center p-6 border-b border-base-200 bg-base-50">
                     <div>
                         <h3 className="text-xl font-bold flex items-center gap-2">
@@ -81,7 +85,6 @@ export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCus
                     {isAddMode ? (
                         <form onSubmit={handleCreate} className="bg-base-200/50 p-6 rounded-2xl border border-base-300 space-y-4 animate-in fade-in slide-in-from-top-4">
                             <h4 className="font-bold flex items-center gap-2 text-primary">
-                                <Plus size={18} />
                                 New Custom Field
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -117,23 +120,26 @@ export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCus
                                         <option value="text">Text</option>
                                         <option value="number">Number</option>
                                         <option value="boolean">Boolean</option>
-                                        <option value="json">JSON / List</option>
                                     </select>
                                 </div>
-                                {newField.dataType === 'json' && (
+                                {(newField.dataType === 'text' || newField.dataType === 'number') && (
                                     <div className="form-control">
-                                        <label className="label py-1"><span className="label-text text-xs font-bold uppercase tracking-widest opacity-60">Enums (Comma separated)</span></label>
+                                        <label className="label py-1">
+                                            <span className="label-text text-xs font-bold uppercase tracking-widest opacity-60">
+                                                Enums <span className="normal-case font-normal">(Optional, Comma separated)</span>
+                                            </span>
+                                        </label>
                                         <input
                                             type="text"
                                             className="input input-bordered input-sm rounded-lg"
-                                            placeholder="Red, Blue, Green"
+                                            placeholder="e.g. Red, Blue, Green"
                                             value={newField.enums}
                                             onChange={(e) => setNewField({ ...newField, enums: e.target.value })}
                                         />
                                     </div>
                                 )}
                             </div>
-                            <div className="form-control">
+                            <div className="form-control flex flex-col">
                                 <label className="label py-1"><span className="label-text text-xs font-bold uppercase tracking-widest opacity-60">Description</span></label>
                                 <textarea
                                     className="textarea textarea-bordered textarea-sm rounded-lg"
@@ -159,58 +165,63 @@ export function ManageCustomFieldsModal({ category, isOpen, onClose }: ManageCus
                         </button>
                     )}
 
-                    <div className="space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-base-content/30 flex items-center gap-2">
-                            Active Fields
-                            <span className="bg-base-200 px-2 rounded-full font-mono">{fields?.length || 0}</span>
-                        </h4>
+                    {!isAddMode && (
+                        <div className="space-y-4">
+                            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-base-content/30 flex items-center gap-2">
+                                Active Fields
+                                <span className="bg-base-200 px-2 rounded-full font-mono">{fields?.length || 0}</span>
+                            </h4>
 
-                        {isLoading ? (
-                            <div className="flex justify-center py-8"><span className="loading loading-spinner text-primary"></span></div>
-                        ) : (
-                            <div className="grid gap-3">
-                                {fields?.map((field) => (
-                                    <div key={field.id} className="flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-2xl hover:border-primary/20 transition-colors group">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                                                <Tag size={18} />
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-base-content">{field.name}</span>
-                                                    <div className="badge badge-sm badge-outline opacity-50 uppercase text-[10px] font-bold tracking-tighter">{field.dataType}</div>
+                            {isLoading ? (
+                                <div className="flex justify-center py-8"><span className="loading loading-spinner text-primary"></span></div>
+                            ) : (
+                                <div className="grid gap-3">
+                                    {fields?.map((field) => (
+                                        <div key={field.id} className="flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-2xl hover:border-primary/20 transition-colors group">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                                                    <Tag size={18} />
                                                 </div>
-                                                <div className="text-[11px] font-mono text-base-content/40">{field.keyName}</div>
-                                                {field.description && (
-                                                    <div className="flex items-center gap-1 text-[11px] text-base-content/60 mt-1 italic">
-                                                        <Info size={10} />
-                                                        {field.description}
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-bold text-base-content">{field.name}</span>
+                                                        <div className="badge badge-sm badge-outline opacity-50 uppercase text-[10px] font-bold tracking-tighter">{field.dataType}</div>
                                                     </div>
-                                                )}
+                                                    <div className="text-[11px] font-mono text-base-content/40">{field.keyName}</div>
+                                                    {field.description && (
+                                                        <div className="flex items-center gap-1 text-[11px] text-base-content/60 mt-1 italic">
+                                                            <Info size={10} />
+                                                            {field.description}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
+                                            <button
+                                                onClick={() => handleDelete(field.id)}
+                                                className="btn btn-ghost btn-xs btn-square text-error opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => handleDelete(field.id)}
-                                            className="btn btn-ghost btn-xs btn-square text-error opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                ))}
-                                {fields?.length === 0 && !isAddMode && (
-                                    <div className="text-center py-10 opacity-30 italic font-medium">
-                                        No custom fields defined for this category.
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                                    ))}
+                                    {fields?.length === 0 && !isAddMode && (
+                                        <div className="text-center py-10 opacity-30 italic font-medium">
+                                            No custom fields defined for this category.
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                <div className="p-6 border-t border-base-200 bg-base-50 flex justify-end">
+                {!isAddMode && <div className="p-6 border-t border-base-200 bg-base-50 flex justify-end">
                     <button onClick={onClose} className="btn btn-ghost rounded-xl px-10">Done</button>
-                </div>
+                </div>}
             </div>
-        </div>
+            <form method="dialog" className="modal-backdrop">
+                <button onClick={onClose}>close</button>
+            </form>
+        </dialog>
     );
 }

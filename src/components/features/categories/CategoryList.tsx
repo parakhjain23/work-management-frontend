@@ -50,8 +50,7 @@ export function CategoryList() {
                 {categories?.map((category) => (
                     <div
                         key={category.id}
-                        className="card bg-base-100 border border-base-200 hover:border-primary/30 transition-all hover:shadow-lg group"
-                    >
+                        className="card bg-base-100 border border-base-300 hover:border-primary/30 transition-all hover:shadow-md group" >
                         <div className="card-body p-5">
                             <div className="flex justify-between items-start">
                                 <div>
@@ -96,7 +95,7 @@ export function CategoryList() {
                 </div>
             )}
 
-            <AddCategoryModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+            {isAddModalOpen && <AddCategoryModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />}
 
             {selectedCategory && (
                 <ManageCustomFieldsModal

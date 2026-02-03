@@ -56,7 +56,10 @@ export const categoryApi = createApi({
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: (_result, _error, { categoryId }) => [{ type: 'CustomField', id: `LIST_${categoryId}` }],
+            invalidatesTags: (_result, _error, { categoryId }) => [
+                'Category',
+                { type: 'Category', id: categoryId },
+            ],
         }),
         updateCustomField: builder.mutation<CustomField, { id: string; body: Partial<CustomField> }>({
             query: ({ id, body }) => ({
@@ -64,7 +67,10 @@ export const categoryApi = createApi({
                 method: 'PATCH',
                 body,
             }),
-            invalidatesTags: (_result, _error, { id }) => [{ type: 'CustomField', id }],
+            invalidatesTags: (_result, _error, { id }) => [
+                'Category',
+                { type: 'Category', id },
+            ],
         }),
         deleteCustomField: builder.mutation<void, { id: string; categoryId: string }>({
             query: ({ id }) => ({
@@ -72,8 +78,8 @@ export const categoryApi = createApi({
                 method: 'DELETE',
             }),
             invalidatesTags: (_result, _error, { id, categoryId }) => [
-                { type: 'CustomField', id },
-                { type: 'CustomField', id: `LIST_${categoryId}` }
+                'Category',
+                { type: 'Category', id: categoryId },
             ],
         }),
     }),
