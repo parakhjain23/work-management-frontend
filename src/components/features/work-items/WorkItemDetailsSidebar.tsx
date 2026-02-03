@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils/cn';
 import { AlignLeft, Calendar, Hash, Info, User, X, Tag } from 'lucide-react';
 import { ChatbotEmbed } from '../ai/ChatbotEmbed';
 import { useUpdateWorkItemMutation, useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation } from '@/lib/redux/api/workItemApi';
-import { useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
+import { useGetCategoryQuery, useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
 import { WorkItemStatus, WorkItemPriority } from '@/types/work-item';
 import toast from 'react-hot-toast';
 
@@ -29,6 +29,8 @@ export function WorkItemDetailsSidebar() {
     const { data: categoryData } = useGetCategoryQuery(item?.categoryId as string, {
         skip: !item?.categoryId,
     });
+
+    const { data: allCategories } = useGetCategoriesQuery();
 
     const [updateWorkItem, { isLoading: isUpdating }] = useUpdateWorkItemMutation();
     const [setCustomFieldValue] = useSetCustomFieldValueMutation();
@@ -76,6 +78,15 @@ export function WorkItemDetailsSidebar() {
             toast.success('Due date updated');
         } catch (err) {
             toast.error('Failed to update due date');
+        }
+    };
+
+    const handleCategoryChange = async (newCategoryId: string) => {
+        try {
+            await updateWorkItem({ id: selectedWorkItem.id, body: { categoryId: newCategoryId } }).unwrap();
+            toast.success('Category updated');
+        } catch (err) {
+            toast.error('Failed to update category');
         }
     };
 
@@ -254,6 +265,21 @@ export function WorkItemDetailsSidebar() {
                                             onChange={(e) => handleDueDateChange(e.target.value)}
                                             className="input input-sm input-bordered rounded-xl text-xs font-medium bg-base-200/50 border-transparent focus:border-primary transition-all w-40"
                                         />
+                                    </div>
+
+                                    {/* Category Selector */}
+                                    <div className="flex flex-col gap-1.5">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-base-content/40 ml-1 mt-1">Category</p>
+                                        <select
+                                            value={item.categoryId ?? ''}
+                                            onChange={(e) => handleCategoryChange(e.target.value)}
+                                            className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-200/50 border-transparent focus:border-primary transition-all w-40"
+                                        >
+                                            <option value="" disabled>Select Category</option>
+                                            {allCategories?.map(cat => (
+                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
                             </section>
