@@ -6,7 +6,6 @@ import {
     FolderOpen,
     Plus,
     Users,
-    ChevronLeft,
     Tag,
     Settings
 } from 'lucide-react';
@@ -101,15 +100,7 @@ export function Sidebar() {
             </div>
 
             {/* Back to Org Selector */}
-            <div className="p-4 border-t border-base-300/50">
-                <Link
-                    href="/"
-                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-base-300/50 hover:bg-base-300 transition-all text-xs font-bold text-base-content/50 hover:text-base-content"
-                >
-                    <ChevronLeft size={14} />
-                    Switch Organization
-                </Link>
-            </div>
+
         </div>
     );
 }

@@ -23,6 +23,7 @@ export interface WorkItem {
     dueDate?: string;
     categoryId?: string;
     customFieldValues?: Record<string, any>;
+    customFields?: Record<string, any>;
 }
 
 export interface ApiResponse<T> {

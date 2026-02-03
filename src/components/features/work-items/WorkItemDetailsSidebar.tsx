@@ -5,9 +5,9 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { closeSidebar } from '@/lib/redux/features/uiSlice';
 import { RootState } from '@/lib/redux/store';
 import { cn } from '@/lib/utils/cn';
-import { AlertTriangle, AlignLeft, Calendar, CheckCircle2, Clock, Hash, Info, User, X, Tag } from 'lucide-react';
+import { AlignLeft, Calendar, Hash, Info, User, X, Tag } from 'lucide-react';
 import { ChatbotEmbed } from '../ai/ChatbotEmbed';
-import { useUpdateWorkItemMutation, useGetWorkItemFullDataQuery } from '@/lib/redux/api/workItemApi';
+import { useUpdateWorkItemMutation, useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation } from '@/lib/redux/api/workItemApi';
 import { useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
 import { WorkItemStatus, WorkItemPriority } from '@/types/work-item';
 import toast from 'react-hot-toast';
@@ -31,6 +31,7 @@ export function WorkItemDetailsSidebar() {
     });
 
     const [updateWorkItem, { isLoading: isUpdating }] = useUpdateWorkItemMutation();
+    const [setCustomFieldValue] = useSetCustomFieldValueMutation();
 
     // Local state for editing
     const [localTitle, setLocalTitle] = useState('');
@@ -49,6 +50,7 @@ export function WorkItemDetailsSidebar() {
     }, [fullWorkItem, selectedWorkItem]);
 
     if (!selectedWorkItem) return null;
+    if (!item) return null;
 
     const handleStatusChange = async (newStatus: WorkItemStatus) => {
         try {
@@ -97,17 +99,14 @@ export function WorkItemDetailsSidebar() {
         }
     };
 
-    const handleCustomFieldUpdate = async (fieldKey: string, value: any) => {
+
+
+    const handleCustomFieldUpdate = async (fieldId: string, value: any, dataType: string) => {
         try {
-            const currentCustomFields = item.customFieldValues || {};
-            await updateWorkItem({
-                id: selectedWorkItem.id,
-                body: {
-                    customFieldValues: {
-                        ...currentCustomFields,
-                        [fieldKey]: value
-                    }
-                }
+            await setCustomFieldValue({
+                workItemId: selectedWorkItem.id,
+                fieldId,
+                value: dataType === 'number' ? Number(value) : value
             }).unwrap();
             toast.success('Field updated');
         } catch (err) {
@@ -192,6 +191,27 @@ export function WorkItemDetailsSidebar() {
                                     className="w-full text-3xl font-black text-base-content tracking-tight leading-[1.1] bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary/20 rounded-lg p-1 transition-all"
                                     placeholder="Enter title..."
                                 />
+                            </section>
+
+                            {/* Description Section */}
+                            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="flex items-center gap-2 mb-4 text-base-content/30">
+                                    <AlignLeft size={16} strokeWidth={2.5} />
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">Context & Description</h3>
+                                </div>
+                                <div className="bg-base-200/30 rounded-4xl p-6 border border-base-200/50 relative group transition-all focus-within:bg-base-200/50">
+                                    <textarea
+                                        value={localDescription}
+                                        onChange={(e) => setLocalDescription(e.target.value)}
+                                        onBlur={handleDescriptionUpdate}
+                                        className="w-full text-sm text-base-content/80 leading-relaxed font-medium bg-transparent border-none focus:outline-none resize-none min-h-[120px]"
+                                        placeholder="Add a detailed description..."
+                                    />
+                                </div>
+                            </section>
+
+                            {/* Work Item Fields Section */}
+                            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="flex flex-wrap gap-4 items-center">
                                     {/* Status Selector */}
                                     <div className="flex flex-col gap-1.5">
@@ -238,23 +258,6 @@ export function WorkItemDetailsSidebar() {
                                 </div>
                             </section>
 
-                            {/* Description Section */}
-                            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="flex items-center gap-2 mb-4 text-base-content/30">
-                                    <AlignLeft size={16} strokeWidth={2.5} />
-                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em]">Context & Description</h3>
-                                </div>
-                                <div className="bg-base-200/30 rounded-4xl p-6 border border-base-200/50 relative group transition-all focus-within:bg-base-200/50">
-                                    <textarea
-                                        value={localDescription}
-                                        onChange={(e) => setLocalDescription(e.target.value)}
-                                        onBlur={handleDescriptionUpdate}
-                                        className="w-full text-sm text-base-content/80 leading-relaxed font-medium bg-transparent border-none focus:outline-none resize-none min-h-[120px]"
-                                        placeholder="Add a detailed description..."
-                                    />
-                                </div>
-                            </section>
-
                             {/* Custom Fields Section */}
                             {categoryData?.customFieldMetaData && categoryData.customFieldMetaData.length > 0 && (
                                 <section className="animate-in fade-in slide-in-from-bottom-5 duration-600">
@@ -264,7 +267,7 @@ export function WorkItemDetailsSidebar() {
                                     </div>
                                     <div className="bg-base-200/30 rounded-3xl p-6 border border-base-200/50 grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {categoryData.customFieldMetaData.map((field) => {
-                                            const currentValue = item.customFieldValues?.[field.keyName] ?? '';
+                                            const currentValue = item.customFields?.[field.keyName] ?? item.customFieldValues?.[field.keyName] ?? '';
                                             return (
                                                 <div key={field.id} className="flex flex-col gap-2">
                                                     <label className="text-[10px] font-black uppercase tracking-widest text-base-content/40 pl-1">
@@ -273,7 +276,7 @@ export function WorkItemDetailsSidebar() {
                                                     {field.enums ? (
                                                         <select
                                                             value={currentValue}
-                                                            onChange={(e) => handleCustomFieldUpdate(field.keyName, e.target.value)}
+                                                            onChange={(e) => handleCustomFieldUpdate(field.id, e.target.value, field.dataType)}
                                                             className="select select-sm select-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
                                                         >
                                                             <option value="" disabled>Select {field.name}</option>
@@ -287,7 +290,7 @@ export function WorkItemDetailsSidebar() {
                                                         <input
                                                             type={field.dataType === 'number' ? 'number' : 'text'}
                                                             value={currentValue}
-                                                            onChange={(e) => handleCustomFieldUpdate(field.keyName, e.target.value)}
+                                                            onChange={(e) => handleCustomFieldUpdate(field.id, e.target.value, field.dataType)}
                                                             className="input input-sm input-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
                                                             placeholder={`Enter ${field.name}`}
                                                         />
@@ -322,7 +325,7 @@ export function WorkItemDetailsSidebar() {
                                 <div className="bg-base-200/30 rounded-3xl p-5 border border-base-200/50 hover:border-primary/20 transition-colors group">
                                     <div className="flex items-center gap-2 mb-4 text-base-content/30 group-hover:text-primary/50 transition-colors">
                                         <Calendar size={14} strokeWidth={2.5} />
-                                        <h3 className="text-[10px] font-black uppercase tracking-widest">Timeline</h3>
+                                        <h3 className="text-[10px] font-black uppercase tracking-widest">Created Date</h3>
                                     </div>
                                     <div>
                                         <p className="text-xs font-black text-base-content">
@@ -330,7 +333,6 @@ export function WorkItemDetailsSidebar() {
                                                 month: 'long', day: 'numeric', year: 'numeric'
                                             }) : 'N/A'}
                                         </p>
-                                        <p className="text-[9px] font-bold text-base-content/30 uppercase tracking-tighter">Initialization Date</p>
                                     </div>
                                 </div>
                             </section>

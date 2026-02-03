@@ -53,6 +53,14 @@ export const workItemApi = createApi({
             }),
             invalidatesTags: ['WorkItem'],
         }),
+        setCustomFieldValue: builder.mutation<any, { workItemId: string; fieldId: string; value: any }>({
+            query: ({ workItemId, fieldId, value }) => ({
+                url: `/work-items/${workItemId}/custom-fields/${fieldId}/value`,
+                method: 'PUT',
+                body: { value },
+            }),
+            invalidatesTags: (_result, _error, { workItemId }) => ['WorkItem', { type: 'WorkItem', id: workItemId }, { type: 'WorkItem', id: `FULL_${workItemId}` }],
+        }),
     }),
 });
 
@@ -64,5 +72,6 @@ export const {
     useCreateWorkItemMutation,
     useUpdateWorkItemMutation,
     useDeleteWorkItemMutation,
+    useSetCustomFieldValueMutation,
 } = workItemApi;
 
