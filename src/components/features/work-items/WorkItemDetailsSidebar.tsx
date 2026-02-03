@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useGetCategoriesQuery, useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
+import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
+import { useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation, useUpdateWorkItemMutation } from '@/lib/redux/api/workItemApi';
 import { closeSidebar } from '@/lib/redux/features/uiSlice';
 import { RootState } from '@/lib/redux/store';
 import { cn } from '@/lib/utils/cn';
-import { AlignLeft, Calendar, Hash, Info, User, X, Tag } from 'lucide-react';
-import { ChatbotEmbed } from '../ai/ChatbotEmbed';
-import { useUpdateWorkItemMutation, useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation } from '@/lib/redux/api/workItemApi';
-import { useGetCategoryQuery, useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
-import { WorkItemStatus, WorkItemPriority } from '@/types/work-item';
+import { WorkItemPriority, WorkItemStatus } from '@/types/work-item';
+import { AlignLeft, Calendar, Hash, Info, Tag, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { ChatbotEmbed } from '../ai/ChatbotEmbed';
+import AssigneeSelect from './AssigneeSelect';
 
 export function WorkItemDetailsSidebar() {
     const dispatch = useAppDispatch();
@@ -24,6 +26,7 @@ export function WorkItemDetailsSidebar() {
 
     // Use fullWorkItem if available, otherwise fallback to selectedWorkItem
     const item = fullWorkItem || selectedWorkItem;
+    console.log(item, 'item')
 
     // Fetch category data if categoryId exists
     const { data: categoryData } = useGetCategoryQuery(item?.categoryId as string, {
@@ -38,6 +41,8 @@ export function WorkItemDetailsSidebar() {
     // Local state for editing
     const [localTitle, setLocalTitle] = useState('');
     const [localDescription, setLocalDescription] = useState('');
+
+    const { data: orgUsers } = useGetOrgUsersQuery(undefined);
 
     useEffect(() => {
         // Sync local state when full data arrives or changes
@@ -101,7 +106,7 @@ export function WorkItemDetailsSidebar() {
     };
 
     const handleDescriptionUpdate = async () => {
-        if (!selectedWorkItem || !selectedWorkItem.description || localDescription === selectedWorkItem.description) return;
+        if (!selectedWorkItem || localDescription === selectedWorkItem.description || !localDescription) return;
         try {
             await updateWorkItem({ id: selectedWorkItem.id, body: { description: localDescription } }).unwrap();
             toast.success('Description updated');
@@ -109,7 +114,6 @@ export function WorkItemDetailsSidebar() {
             toast.error('Failed to update description');
         }
     };
-
 
 
     const handleCustomFieldUpdate = async (fieldId: string, value: any, dataType: string) => {
@@ -122,6 +126,15 @@ export function WorkItemDetailsSidebar() {
             toast.success('Field updated');
         } catch (err) {
             toast.error('Failed to update field');
+        }
+    };
+
+    const handleAssigneeUpdate = async (assigneeId: string) => {
+        try {
+            await updateWorkItem({ id: selectedWorkItem.id, body: { assigneeId } }).unwrap();
+            toast.success('Assignee updated');
+        } catch (err) {
+            toast.error('Failed to update assignee');
         }
     };
 
@@ -330,23 +343,12 @@ export function WorkItemDetailsSidebar() {
 
                             {/* Details Grid */}
                             <section className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                                <div className="bg-base-200/30 rounded-3xl p-5 border border-base-200/50 hover:border-primary/20 transition-colors group">
-                                    <div className="flex items-center gap-2 mb-4 text-base-content/30 group-hover:text-primary/50 transition-colors">
-                                        <User size={14} strokeWidth={2.5} />
-                                        <h3 className="text-[10px] font-black uppercase tracking-widest">Ownership</h3>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="avatar placeholder ring-4 ring-base-100 rounded-full">
-                                            <div className="bg-primary/10 text-primary rounded-2xl w-10 h-10 shadow-inner">
-                                                <span className="text-sm font-black">{(item as any).assignee?.name?.charAt(0) || 'U'}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-black text-base-content">{(item as any).assignee?.name || 'Unassigned'}</p>
-                                            <p className="text-[9px] font-bold text-base-content/30 uppercase tracking-tighter">Current Lead</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                {/* Ownership Section with Dropdown */}
+                                <AssigneeSelect
+                                    item={item}
+                                    orgUsers={orgUsers || []}
+                                    handleAssigneeUpdate={handleAssigneeUpdate}
+                                />
 
                                 <div className="bg-base-200/30 rounded-3xl p-5 border border-base-200/50 hover:border-primary/20 transition-colors group">
                                     <div className="flex items-center gap-2 mb-4 text-base-content/30 group-hover:text-primary/50 transition-colors">
@@ -354,7 +356,7 @@ export function WorkItemDetailsSidebar() {
                                         <h3 className="text-[10px] font-black uppercase tracking-widest">Created Date</h3>
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-base-content">
+                                        <p className="text-xs text-base-content font-semibold">
                                             {item.createdAt ? new Date(item.createdAt).toLocaleDateString(undefined, {
                                                 month: 'long', day: 'numeric', year: 'numeric'
                                             }) : 'N/A'}

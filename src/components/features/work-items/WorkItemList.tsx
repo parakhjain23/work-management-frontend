@@ -3,10 +3,11 @@
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { useAppDispatch } from '@/hooks/redux';
-import { useGetWorkItemsQuery, useGetWorkItemsByCategoryQuery } from '@/lib/redux/api/workItemApi';
+import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
+import { useGetWorkItemsByCategoryQuery, useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
 import { selectWorkItem } from '@/lib/redux/features/uiSlice';
 import { cn } from '@/lib/utils/cn';
-import { AlertTriangle, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, Clock, Info, User } from 'lucide-react';
 
 interface WorkItemListProps {
     categoryId?: string;
@@ -14,6 +15,9 @@ interface WorkItemListProps {
 
 export function WorkItemList({ categoryId }: WorkItemListProps) {
     const dispatch = useAppDispatch();
+
+    // Fetch org users for assignee resolution
+    const { data: orgUsers } = useGetOrgUsersQuery(undefined);
 
     // Conditional query based on categoryId presence
     const allWorkItemsQuery = useGetWorkItemsQuery(undefined, { skip: !!categoryId });
@@ -86,24 +90,52 @@ export function WorkItemList({ categoryId }: WorkItemListProps) {
 
                         {/* Priority */}
                         <div className="flex-1">
-                            <span className={cn(
-                                "badge badge-xs uppercase font-black tracking-widest px-2 py-2 text-[9px]",
-                                item.priority === 'URGENT' ? 'badge-error text-error-content' :
-                                    item.priority === 'HIGH' ? 'badge-warning text-warning-content' :
-                                        item.priority === 'MEDIUM' ? 'badge-info text-info-content' : 'badge-neutral'
-                            )}>
-                                {item.priority}
-                            </span>
+                            {(() => {
+                                const styles = {
+                                    URGENT: 'bg-red-50 text-red-600 border-red-200',
+                                    HIGH: 'bg-amber-50 text-amber-600 border-amber-200',
+                                    MEDIUM: 'bg-blue-50 text-blue-600 border-blue-200',
+                                    LOW: 'bg-slate-50 text-slate-600 border-slate-200'
+                                };
+                                const icons = {
+                                    URGENT: AlertCircle,
+                                    HIGH: AlertTriangle,
+                                    MEDIUM: Info,
+                                    LOW: CheckCircle2
+                                };
+                                const Icon = icons[item.priority] || CheckCircle2;
+
+                                return (
+                                    <div className={cn(
+                                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-colors",
+                                        styles[item.priority] || styles.LOW
+                                    )}>
+                                        <Icon size={12} strokeWidth={2.5} />
+                                        <span>{item.priority}</span>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         {/* Assignee */}
                         <div className="flex-1 flex items-center gap-3">
-                            <div className="avatar placeholder ring-1 ring-primary/20 rounded-full">
-                                <div className="bg-neutral text-neutral-content rounded-full w-6 shadow-inner">
-                                    <span className="text-[10px] font-bold">{item.assignee?.name?.charAt(0) || 'U'}</span>
-                                </div>
-                            </div>
-                            <span className="text-xs font-bold text-base-content/70">{item.assignee?.name || 'Unassigned'}</span>
+                            {(() => {
+                                const assignee = orgUsers?.find((u: any) => String(u.id) === String(item.assigneeId));
+                                return (
+                                    <>
+                                        <div className="avatar placeholder">
+                                            <div className="bg-neutral text-neutral-content rounded-xl w-6 h-6 flex items-center justify-center shadow-inner">
+                                                {assignee?.name ? (
+                                                    <span className="text-[10px] font-bold">{assignee.name.charAt(0)}</span>
+                                                ) : (
+                                                    <User size={12} strokeWidth={2.5} />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-xs font-bold text-base-content/70">{assignee?.name || 'Unassigned'}</span>
+                                    </>
+                                );
+                            })()}
                         </div>
 
                         {/* Date */}
