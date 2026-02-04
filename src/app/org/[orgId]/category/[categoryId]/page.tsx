@@ -6,8 +6,12 @@ import { useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
 import { useParams } from 'next/navigation';
 import { Tag, Filter, LayoutGrid, List, Plus } from 'lucide-react';
 
+import { useAppDispatch } from '@/hooks/redux';
+import { openCreateModal } from '@/lib/redux/features/uiSlice';
+
 export default function CategoryWorkItemsPage() {
     const { categoryId } = useParams();
+    const dispatch = useAppDispatch();
     const { data: category, isLoading } = useGetCategoryQuery(categoryId as string);
 
     return (
@@ -50,6 +54,7 @@ export default function CategoryWorkItemsPage() {
                         </div>
 
                         <button
+                            onClick={() => dispatch(openCreateModal({ categoryId: categoryId as string }))}
                             className="btn btn-primary btn-md gap-2 px-6 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-bold"
                         >
                             <Plus size={20} strokeWidth={3} />

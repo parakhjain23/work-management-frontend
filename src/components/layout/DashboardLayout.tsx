@@ -5,6 +5,7 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { QuickAIInput } from '@/components/features/ai/QuickAIInput';
 import { WorkItemDetailsSidebar } from '@/components/features/work-items/WorkItemDetailsSidebar';
+import { CreateWorkItemModal } from '@/components/features/work-items/CreateWorkItemModal';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -28,6 +29,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
             {isDashboard && <QuickAIInput />}
             <WorkItemDetailsSidebar />
+            <CreateWorkItemModal />
         </div>
     );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { useGetCategoriesQuery, useGetCategoryQuery } from '@/lib/redux/api/categoryApi';
+import { useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
 import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
 import { useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation, useUpdateWorkItemMutation } from '@/lib/redux/api/workItemApi';
 import { closeSidebar } from '@/lib/redux/features/uiSlice';
@@ -26,13 +26,10 @@ export function WorkItemDetailsSidebar() {
 
     // Use fullWorkItem if available, otherwise fallback to selectedWorkItem
     const item = fullWorkItem || selectedWorkItem;
-    console.log(item?.priority, 'priority')
     // Fetch category data if categoryId exists
-    const { data: categoryData } = useGetCategoryQuery(item?.categoryId as string, {
-        skip: !item?.categoryId,
-    });
-
     const { data: allCategories } = useGetCategoriesQuery();
+    const categoryData = allCategories?.find(c => String(c.id) === String(item?.categoryId));
+
 
     const [updateWorkItem, { isLoading: isUpdating }] = useUpdateWorkItemMutation();
     const [setCustomFieldValue] = useSetCustomFieldValueMutation();

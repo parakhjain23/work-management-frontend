@@ -5,7 +5,7 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { useAppDispatch } from '@/hooks/redux';
 import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
 import { useGetWorkItemsByCategoryQuery, useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
-import { selectWorkItem } from '@/lib/redux/features/uiSlice';
+import { openCreateModal, selectWorkItem } from '@/lib/redux/features/uiSlice';
 import { cn } from '@/lib/utils/cn';
 import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, Clock, Info, User } from 'lucide-react';
 
@@ -42,7 +42,14 @@ export function WorkItemList({ categoryId }: WorkItemListProps) {
     }
 
     if (!workItems || workItems.length === 0) {
-        return <EmptyState title="No Work Items" description="Ready to start something new? Create your first work item to get started." actionLabel="New Work Item" onAction={() => { }} />;
+        return (
+            <EmptyState
+                title="No Work Items"
+                description="Ready to start something new? Create your first work item to get started."
+                actionLabel="New Work Item"
+                onAction={() => dispatch(openCreateModal({ categoryId }))}
+            />
+        );
     }
 
     return (

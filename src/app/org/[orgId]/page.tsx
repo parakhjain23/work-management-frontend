@@ -1,8 +1,14 @@
+'use client';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { WorkItemList } from '@/components/features/work-items/WorkItemList';
 import { Plus, Filter, LayoutGrid, List } from 'lucide-react';
+import { useAppDispatch } from '@/hooks/redux';
+import { openCreateModal } from '@/lib/redux/features/uiSlice';
 
 export default function OrgPage() {
+    const dispatch = useAppDispatch();
+
     return (
         <DashboardLayout>
             <div className="space-y-10 pb-10">
@@ -26,7 +32,7 @@ export default function OrgPage() {
                             <button className="btn btn-ghost btn-sm px-2 hover:bg-base-100">
                                 <Filter size={16} className="text-base-content/60" />
                             </button>
-                            <div className="w-[1px] h-4 bg-base-300 mx-1"></div>
+                            <div className="w-px h-4 bg-base-300 mx-1"></div>
                             <button className="btn btn-ghost btn-xs rounded-lg bg-base-100 shadow-sm">
                                 <LayoutGrid size={14} />
                             </button>
@@ -35,7 +41,10 @@ export default function OrgPage() {
                             </button>
                         </div>
 
-                        <button className="btn btn-primary btn-md gap-2 px-6 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-bold">
+                        <button
+                            onClick={() => dispatch(openCreateModal())}
+                            className="btn btn-primary btn-md gap-2 px-6 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-bold"
+                        >
                             <Plus size={20} strokeWidth={3} />
                             <span className="hidden sm:inline">New Item</span>
                         </button>
