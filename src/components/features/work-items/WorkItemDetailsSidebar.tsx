@@ -3,12 +3,12 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
 import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
-import { useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation, useUpdateWorkItemMutation } from '@/lib/redux/api/workItemApi';
+import { useDeleteWorkItemMutation, useGetWorkItemFullDataQuery, useSetCustomFieldValueMutation, useUpdateWorkItemMutation } from '@/lib/redux/api/workItemApi';
 import { closeSidebar } from '@/lib/redux/features/uiSlice';
 import { RootState } from '@/lib/redux/store';
 import { cn } from '@/lib/utils/cn';
 import { WorkItemPriority, WorkItemStatus } from '@/types/work-item';
-import { AlignLeft, Calendar, Hash, Info, Tag, X } from 'lucide-react';
+import { AlignLeft, Calendar, Hash, Info, Tag, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ChatbotEmbed } from '../ai/ChatbotEmbed';
@@ -32,6 +32,7 @@ export function WorkItemDetailsSidebar() {
 
 
     const [updateWorkItem, { isLoading: isUpdating }] = useUpdateWorkItemMutation();
+    const [deleteWorkItem, { isLoading: isDeleting }] = useDeleteWorkItemMutation();
     const [setCustomFieldValue] = useSetCustomFieldValueMutation();
 
     // Local state for editing
@@ -151,6 +152,19 @@ export function WorkItemDetailsSidebar() {
         }
     };
 
+    const handleDeleteWorkItem = async () => {
+        if (!selectedWorkItem) return;
+        if (!window.confirm('Are you sure you want to delete this work item?')) return;
+
+        try {
+            await deleteWorkItem(selectedWorkItem.id).unwrap();
+            toast.success('Work item deleted');
+            dispatch(closeSidebar());
+        } catch (err) {
+            toast.error('Failed to delete work item');
+        }
+    };
+
 
     const statusOptions: { value: WorkItemStatus; label: string }[] = [
         { value: 'CAPTURED', label: 'Captured' },
@@ -202,8 +216,19 @@ export function WorkItemDetailsSidebar() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {(isUpdating || isFetchingFullData) && <span className="loading loading-spinner loading-xs text-primary"></span>}
+                        {(isUpdating || isFetchingFullData || isDeleting) && <span className="loading loading-spinner loading-xs text-primary"></span>}
                         <div className="w-px h-4 bg-base-300 mx-2"></div>
+
+                        <div className="tooltip tooltip-bottom" data-tip="Delete Work Item">
+                            <button
+                                onClick={handleDeleteWorkItem}
+                                disabled={isDeleting}
+                                className="p-2 hover:bg-error/10 rounded-2xl transition-all duration-300 text-base-content/40 hover:text-error active:scale-95 disabled:opacity-50"
+                            >
+                                <Trash2 size={20} strokeWidth={2.5} />
+                            </button>
+                        </div>
+
                         <button
                             onClick={() => dispatch(closeSidebar())}
                             className="p-2 hover:bg-base-200 rounded-2xl transition-all duration-300 text-base-content/40 hover:text-base-content hover:rotate-90 active:scale-95"
