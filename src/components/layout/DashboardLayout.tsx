@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </main>
             </div>
-            <div className="drawer-side z-70">
+            <div className="drawer-side z-60">
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
                 <Sidebar />
             </div>

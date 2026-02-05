@@ -34,8 +34,6 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         { skip: debouncedQuery.length < 2 }
     );
 
-    console.log(searchResults, 'search')
-
     // Focus input when modal opens
     useEffect(() => {
         if (isOpen && inputRef.current) {
@@ -79,12 +77,12 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-60 animate-fadeIn"
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-70 animate-fadeIn"
                 onClick={handleClose}
             />
 
             {/* Modal */}
-            <div className="fixed inset-0 z-60 flex items-start justify-center pt-[15vh] pointer-events-none">
+            <div className="fixed inset-0 z-70 flex items-start justify-center pt-[15vh] pointer-events-none">
                 <div
                     className="bg-base-100 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 pointer-events-auto animate-slideDown border border-base-300"
                     onClick={(e) => e.stopPropagation()}
