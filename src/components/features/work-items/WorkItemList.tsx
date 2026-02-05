@@ -2,12 +2,14 @@
 
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { PriorityBadge } from '@/components/ui/PriorityBadge';
 import { useAppDispatch } from '@/hooks/redux';
 import { useGetOrgUsersQuery } from '@/lib/redux/api/orgApi';
 import { useGetWorkItemsByCategoryQuery, useGetWorkItemsQuery } from '@/lib/redux/api/workItemApi';
 import { openCreateModal, selectWorkItem } from '@/lib/redux/features/uiSlice';
 import { cn } from '@/lib/utils/cn';
-import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, Clock, Info, User } from 'lucide-react';
+import { Calendar, User } from 'lucide-react';
 
 interface WorkItemListProps {
     categoryId?: string;
@@ -81,47 +83,12 @@ export function WorkItemList({ categoryId }: WorkItemListProps) {
 
                         {/* Status */}
                         <div className="flex-1 flex items-center">
-                            <div className={cn(
-                                "flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                                item.status === 'CLOSED' || item.status === 'ARCHIVED' ? 'bg-success/10 text-success border-success/20' :
-                                    item.status === 'IN_PROGRESS' || item.status === 'IN_REVIEW' ? 'bg-primary/10 text-primary border-primary/20' :
-                                        item.status === 'DECIDED' || item.status === 'THINKING' ? 'bg-info/10 text-info border-info/20' :
-                                            'bg-base-200 text-base-content/40 border-base-300'
-                            )}>
-                                {item.status === 'CLOSED' ? <CheckCircle2 size={12} strokeWidth={3} /> :
-                                    item.status === 'IN_PROGRESS' || item.status === 'IN_REVIEW' ? <Clock size={12} strokeWidth={3} /> :
-                                        <AlertTriangle size={12} strokeWidth={3} />}
-                                {item.status}
-                            </div>
+                            <StatusBadge status={item.status} />
                         </div>
 
                         {/* Priority */}
                         <div className="flex-1">
-                            {(() => {
-                                const styles = {
-                                    URGENT: 'bg-red-50 text-red-600 border-red-200',
-                                    HIGH: 'bg-amber-50 text-amber-600 border-amber-200',
-                                    MEDIUM: 'bg-blue-50 text-blue-600 border-blue-200',
-                                    LOW: 'bg-slate-50 text-slate-600 border-slate-200'
-                                };
-                                const icons = {
-                                    URGENT: AlertCircle,
-                                    HIGH: AlertTriangle,
-                                    MEDIUM: Info,
-                                    LOW: CheckCircle2
-                                };
-                                const Icon = icons[item.priority] || CheckCircle2;
-
-                                return (
-                                    <div className={cn(
-                                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-colors",
-                                        styles[item.priority] || styles.LOW
-                                    )}>
-                                        <Icon size={12} strokeWidth={2.5} />
-                                        <span>{item.priority}</span>
-                                    </div>
-                                );
-                            })()}
+                            <PriorityBadge priority={item.priority} />
                         </div>
 
                         {/* Assignee */}

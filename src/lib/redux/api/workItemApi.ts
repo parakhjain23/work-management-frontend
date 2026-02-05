@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { customFetchBaseQuery } from './interceptor';
-import { WorkItem, ApiResponse } from '@/types/work-item';
+import { WorkItem, ApiResponse, SearchedWorkItem } from '@/types/work-item';
 
 export const workItemApi = createApi({
     reducerPath: 'workItemApi',
@@ -61,6 +61,17 @@ export const workItemApi = createApi({
             }),
             invalidatesTags: (_result, _error, { workItemId }) => ['WorkItem', { type: 'WorkItem', id: workItemId }, { type: 'WorkItem', id: `FULL_${workItemId}` }],
         }),
+        searchWorkItems: builder.query<SearchedWorkItem[], { query: string; limit?: number; offset?: number }>({
+            query: ({ query, limit = 20, offset = 0 }) => ({
+                url: '/search/work-items',
+                params: { query, limit, offset },
+            }),
+            transformResponse: (response: ApiResponse<SearchedWorkItem[]>) => response.data,
+            providesTags: (result) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'WorkItem' as const, id })), { type: 'WorkItem', id: 'SEARCH' }]
+                    : [{ type: 'WorkItem', id: 'SEARCH' }],
+        }),
     }),
 });
 
@@ -73,5 +84,6 @@ export const {
     useUpdateWorkItemMutation,
     useDeleteWorkItemMutation,
     useSetCustomFieldValueMutation,
+    useSearchWorkItemsQuery,
 } = workItemApi;
 

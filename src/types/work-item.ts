@@ -26,6 +26,36 @@ export interface WorkItem {
     customFields?: Record<string, any>;
 }
 
+export interface Category {
+    id: number;
+    name: string;
+    keyName: string;
+}
+
+export interface SearchedWorkItem {
+    id: number;
+    orgId: number;
+    externalId: string | null;
+    categoryId: number;
+    title: string;
+    description: string;
+    status: WorkItemStatus;
+    priority: WorkItemPriority;
+    assigneeId: number;
+    createdBy: number;
+    updatedBy: number;
+    startDate: string | null;
+    dueDate: string | null;
+    parentId: number | null;
+    rootParentId: number | null;
+    docId: string;
+    createdAt: string;
+    updatedAt: string;
+    category: Category;
+}
+
+
+
 export interface ApiResponse<T> {
     data: T;
     message?: string;

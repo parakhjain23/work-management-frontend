@@ -1,17 +1,19 @@
 'use client';
 
+import { useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
 import {
-    LayoutDashboard,
     CheckSquare,
     FolderOpen,
+    LayoutDashboard,
     Plus,
-    Users,
     Tag,
+    Users,
     Zap
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import { useGetCategoriesQuery } from '@/lib/redux/api/categoryApi';
+
+import { OrgSwitcher } from './OrgSwitcher';
 
 export function Sidebar() {
     const params = useParams();
@@ -28,14 +30,13 @@ export function Sidebar() {
 
     return (
         <div className="flex flex-col h-full bg-base-200/50 backdrop-blur-lg w-64 border-r border-base-300 transition-all duration-300">
-            <div className="flex items-center gap-3 px-8 py-10">
-                <div className="bg-primary p-2 rounded-xl text-primary-content shadow-lg shadow-primary/20">
-                    <CheckSquare size={24} strokeWidth={2.5} />
-                </div>
-                <span className="text-2xl font-black tracking-tighter bg-linear-to-br from-base-content to-base-content/60 bg-clip-text text-transparent">
+            <div className="flex items-center gap-3 px-8 pt-4 pb-4">
+                <span className="text-xl font-black tracking-tighter bg-linear-to-br from-base-content to-base-content/60 bg-clip-text text-transparent">
                     WorkFlow
                 </span>
             </div>
+
+            <OrgSwitcher />
 
             <div className="flex-1 overflow-y-auto px-4 space-y-8 scrollbar-hide">
                 <nav className="space-y-2">

@@ -189,7 +189,7 @@ export function WorkItemDetailsSidebar() {
             {/* Backdrop */}
             <div
                 className={cn(
-                    "fixed inset-0 bg-base-300/10 backdrop-blur-xs z-50 transition-opacity duration-500 ease-in-out",
+                    "fixed inset-0 bg-base-300/10 backdrop-blur-xs z-[70] transition-opacity duration-500 ease-in-out",
                     isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}
                 onClick={() => dispatch(closeSidebar())}
@@ -198,7 +198,7 @@ export function WorkItemDetailsSidebar() {
             {/* Sidebar */}
             <div
                 className={cn(
-                    "fixed top-0 right-0 h-full w-[95%] md:w-[85%] lg:w-[75%] xl:w-[65%] max-w-6xl bg-base-100 shadow-2xl z-50 flex flex-col transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-l border-base-200",
+                    "fixed top-0 right-0 h-full w-[95%] md:w-[85%] lg:w-[75%] xl:w-[65%] max-w-6xl bg-base-100 shadow-2xl z-[70] flex flex-col transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-l border-base-200",
                     isSidebarOpen ? "translate-x-0" : "translate-x-full"
                 )}
             >
