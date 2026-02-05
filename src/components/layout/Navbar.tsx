@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, LogOut, Zap, Building2 } from 'lucide-react';
+import { Search, LogOut, Zap, Building2, Menu } from 'lucide-react';
 import { useGetProxyUserQuery } from '@/lib/redux/api/orgApi';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -37,7 +37,9 @@ export function Navbar() {
         <>
             <div className="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200 px-4 md:px-8 sticky top-0 z-30">
                 <div className="flex-1">
-                    {/* Empty flex-1 to push content to the right */}
+                    <label htmlFor="my-drawer-2" className="btn btn-ghost drawer-button lg:hidden px-2">
+                        <Menu size={20} />
+                    </label>
                 </div>
                 <div className="flex-none flex items-center gap-2">
                     {/* Search Trigger */}

@@ -29,7 +29,7 @@ export function Sidebar() {
     ];
 
     return (
-        <div className="flex flex-col h-full bg-base-200/50 backdrop-blur-lg w-64 border-r border-base-300 transition-all duration-300">
+        <div className="flex flex-col h-full bg-base-200 lg:bg-base-200/50 backdrop-blur-lg w-64 border-r border-base-300 transition-all duration-300">
             <div className="flex items-center gap-3 px-8 pt-4 pb-4">
                 <span className="text-xl font-black tracking-tighter bg-linear-to-br from-base-content to-base-content/60 bg-clip-text text-transparent">
                     WorkFlow

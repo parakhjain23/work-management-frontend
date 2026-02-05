@@ -15,17 +15,19 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <div className="flex h-screen bg-base-100 overflow-hidden relative">
-            <div className="hidden lg:block h-full">
-                <Sidebar />
-            </div>
-            <div className="flex flex-col flex-1 h-full overflow-hidden">
+        <div className="drawer lg:drawer-open h-screen bg-base-100 overflow-hidden relative">
+            <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content flex flex-col flex-1 h-full overflow-hidden">
                 <Navbar />
                 <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-base-100/50">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>
                 </main>
+            </div>
+            <div className="drawer-side z-70">
+                <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
+                <Sidebar />
             </div>
             {isDashboard && <QuickAIInput />}
             <WorkItemDetailsSidebar />
