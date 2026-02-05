@@ -2,16 +2,14 @@
 
 import { useGetCategoriesQuery, useDeleteCategoryMutation } from '@/lib/redux/api/categoryApi';
 import { Category } from '@/types/category';
-import { Settings2, Trash2, Plus, Box, ExternalLink } from 'lucide-react';
+import { Settings2, Trash2, Box, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
-import { AddCategoryModal } from './AddCategoryModal';
 import { ManageCustomFieldsModal } from './ManageCustomFieldsModal';
 import toast from 'react-hot-toast';
 
 export function CategoryList() {
     const { data: categories, isLoading, error } = useGetCategoriesQuery();
     const [deleteCategory] = useDeleteCategoryMutation();
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [isManageFieldsOpen, setIsManageFieldsOpen] = useState(false);
 
@@ -32,57 +30,54 @@ export function CategoryList() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <Box className="text-primary" />
-                    Available Categories
-                </h2>
-                <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="btn btn-primary btn-sm gap-2 rounded-xl"
-                >
-                    <Plus size={18} />
-                    Add Category
-                </button>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex flex-col gap-2">
                 {categories?.map((category) => (
                     <div
                         key={category.id}
-                        className="card bg-base-100 border border-base-300 hover:border-primary/30 transition-all hover:shadow-md group" >
-                        <div className="card-body p-5">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h3 className="card-title text-lg font-bold">{category.name}</h3>
-                                    <p className="text-xs font-mono text-base-content/50">ID: {category.keyName}</p>
-                                </div>
-                                {category.externalTool && (
-                                    <div className="badge badge-outline badge-sm gap-1">
-                                        <ExternalLink size={10} />
-                                        {category.externalTool}
-                                    </div>
-                                )}
-                            </div>
+                        className="group flex flex-col md:flex-row md:items-center gap-4 bg-base-100 hover:bg-base-200/50 p-4 md:px-6 md:py-4 rounded-2xl border border-base-200 transition-all duration-200 hover:shadow-lg hover:shadow-base-300/10 active:scale-[0.99]"
+                    >
+                        {/* Name & ID */}
+                        <div className="flex-2 min-w-0">
+                            <h3 className="text-base font-bold text-base-content group-hover:text-primary transition-colors flex items-center gap-2">
+                                <Box size={18} className="text-primary/50" />
+                                {category.name}
+                            </h3>
+                            <p className="text-[10px] font-mono text-base-content/40 mt-0.5 uppercase tracking-widest leading-none">
+                                KEY: {category.keyName}
+                            </p>
+                        </div>
 
-                            <div className="card-actions justify-end mt-4 pt-4 border-t border-base-200">
-                                <button
-                                    onClick={() => {
-                                        setSelectedCategory(category);
-                                        setIsManageFieldsOpen(true);
-                                    }}
-                                    className="btn btn-ghost btn-sm gap-2 text-primary hover:bg-primary/5"
-                                >
-                                    <Settings2 size={16} />
-                                    Manage Fields
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(category.id)}
-                                    className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/5"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
+                        {/* External Tool */}
+                        <div className="flex-1">
+                            {category.externalTool ? (
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-secondary/5 text-secondary border-secondary/20">
+                                    <ExternalLink size={12} strokeWidth={3} />
+                                    {category.externalTool}
+                                </div>
+                            ) : (
+                                <span className="text-[10px] font-black uppercase tracking-widest text-base-content/20 italic">Native Asset</span>
+                            )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-end gap-2 shrink-0">
+                            <button
+                                onClick={() => {
+                                    setSelectedCategory(category);
+                                    setIsManageFieldsOpen(true);
+                                }}
+                                className="btn btn-ghost btn-sm gap-2 text-primary hover:bg-primary/5 px-4 rounded-xl font-bold border border-transparent hover:border-primary/10"
+                            >
+                                <Settings2 size={16} />
+                                <span className="hidden sm:inline">Manage Fields</span>
+                            </button>
+                            <button
+                                onClick={() => handleDelete(category.id)}
+                                className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/5 rounded-xl border border-transparent hover:border-error/10"
+                            >
+                                <Trash2 size={16} />
+                            </button>
                         </div>
                     </div>
                 ))}
@@ -95,12 +90,9 @@ export function CategoryList() {
                 </div>
             )}
 
-            {isAddModalOpen && <AddCategoryModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />}
-
-            {selectedCategory && (
+            {selectedCategory && isManageFieldsOpen && (
                 <ManageCustomFieldsModal
                     category={selectedCategory}
-                    isOpen={isManageFieldsOpen}
                     onClose={() => {
                         setIsManageFieldsOpen(false);
                         setSelectedCategory(null);

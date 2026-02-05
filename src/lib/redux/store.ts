@@ -4,6 +4,7 @@ import { embedApi } from './api/embedApi';
 import { orgsApi } from './api/orgApi';
 import { workItemApi } from './api/workItemApi';
 import { categoryApi } from './api/categoryApi';
+import { systemPromptApi } from './api/systemPromptApi';
 import { uiSlice } from './features/uiSlice';
 
 export const store = configureStore({
@@ -13,12 +14,13 @@ export const store = configureStore({
         [workItemApi.reducerPath]: workItemApi.reducer,
         [embedApi.reducerPath]: embedApi.reducer,
         [categoryApi.reducerPath]: categoryApi.reducer,
+        [systemPromptApi.reducerPath]: systemPromptApi.reducer,
         ui: uiSlice.reducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(orgsApi.middleware, workItemApi.middleware, embedApi.middleware, categoryApi.middleware),
+        getDefaultMiddleware().concat(orgsApi.middleware, workItemApi.middleware, embedApi.middleware, categoryApi.middleware, systemPromptApi.middleware),
 });
 
 

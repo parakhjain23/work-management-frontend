@@ -1,28 +1,28 @@
 'use client';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { CategoryList } from '@/components/features/categories/CategoryList';
-import { Settings, Box, ChevronRight } from 'lucide-react';
+import { AutomationList } from '@/components/features/automations/AutomationList';
+import { Zap, ChevronRight, Activity, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import { AddCategoryModal } from '@/components/features/categories/AddCategoryModal';
+import { AutomationModal } from '@/components/features/automations/AutomationModal';
 
-export default function CategoriesPage() {
+export default function AutomationsPage() {
     const { orgId } = useParams();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     return (
         <DashboardLayout>
             <div className="space-y-10 pb-10">
-                {/* Breadcrumbs & Navigation */}
+                {/* Breadcrumbs */}
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-base-content/40">
                     <Link href={`/org/${orgId}`} className="hover:text-primary transition-colors">Dashboard</Link>
                     <ChevronRight size={14} strokeWidth={3} />
                     <span className="text-primary">Settings</span>
                     <ChevronRight size={14} strokeWidth={3} />
-                    <span className="text-base-content/80">Categories</span>
+                    <span className="text-base-content/80">Automations</span>
                 </div>
 
                 {/* Header Section */}
@@ -30,16 +30,16 @@ export default function CategoriesPage() {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
                             <span className="w-8 h-[2px] bg-primary"></span>
-                            Organization Assets
+                            AI Intelligence
                         </div>
                         <h1 className="text-4xl font-black tracking-tight text-base-content md:text-5xl flex items-center gap-4">
-                            Categories
+                            Automations
                             <div className="p-2 bg-primary/10 rounded-2xl text-primary">
-                                <Settings size={32} />
+                                <Zap size={32} />
                             </div>
                         </h1>
                         <p className="text-base-content/50 font-medium max-w-md">
-                            Manage work item types and their custom fields to tailor the platform to your workflow.
+                            Manage AI-powered workflows and autonomous agents to automate your repetitive tasks.
                         </p>
                     </div>
 
@@ -48,7 +48,7 @@ export default function CategoriesPage() {
                         className="btn btn-primary btn-md gap-2 px-6 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-bold"
                     >
                         <Plus size={20} strokeWidth={3} />
-                        Add Category
+                        New Automation
                     </button>
                 </div>
 
@@ -59,37 +59,38 @@ export default function CategoriesPage() {
                     <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
 
                     {/* Main Components */}
-                    <CategoryList />
+                    <AutomationList />
                 </div>
 
                 {/* Info Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
                     <div className="bg-primary/5 rounded-3xl p-6 border border-primary/10 flex gap-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
-                            <Box size={24} />
+                            <Activity size={24} />
                         </div>
                         <div>
-                            <h4 className="font-bold text-primary mb-1">What are Categories?</h4>
+                            <h4 className="font-bold text-primary mb-1">What are Automations?</h4>
                             <p className="text-sm text-base-content/60 leading-relaxed font-medium">
-                                Categories allow you to group work items like "Bugs", "Features", or "General Tasks".
-                                Each category can have its own set of custom fields.
+                                Automations allow you to build intelligent reacting workflows.
+                                Define logic that executes automatically when events occur.
                             </p>
                         </div>
                     </div>
                     <div className="bg-secondary/5 rounded-3xl p-6 border border-secondary/10 flex gap-4">
                         <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary shrink-0">
-                            <Settings size={24} />
+                            <Sparkles size={24} />
                         </div>
                         <div>
-                            <h4 className="font-bold text-secondary mb-1">Custom Fields</h4>
+                            <h4 className="font-bold text-secondary mb-1">AI Intelligence</h4>
                             <p className="text-sm text-base-content/60 leading-relaxed font-medium">
-                                Add text, number, boolean or list fields to capture specific data points for each category type.
+                                Use LLMs to process information, summarize work items, or generate responses
+                                without manual intervention.
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-            {isAddModalOpen && <AddCategoryModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />}
+            <AutomationModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
         </DashboardLayout>
     );
 }

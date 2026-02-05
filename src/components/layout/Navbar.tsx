@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Search, LogOut, Settings, Building2 } from 'lucide-react';
+import { Bell, Search, LogOut, Zap, Building2 } from 'lucide-react';
 import { useGetProxyUserQuery } from '@/lib/redux/api/orgApi';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -56,7 +56,7 @@ export function Navbar() {
                             </div>
                         </div>
                         {/* <li><Link href="/profile" className="py-2.5"><User size={16} /> Profile</Link></li> */}
-                        <li><Link href={`/org/${userData?.currentCompany?.id}/settings`} className="py-2.5"><Settings size={16} /> Settings</Link></li>
+                        <li><Link href={`/org/${userData?.currentCompany?.id}/automations`} className="py-2.5"><Zap size={16} /> Automations</Link></li>
                         <li>
                             <button onClick={() => {
                                 localStorage.removeItem('selectedOrgId');
