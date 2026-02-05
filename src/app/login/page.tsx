@@ -50,7 +50,7 @@ function Login() {
 
     // If the user has not logged in, redirect the user to the login page
     const configuration = {
-      referenceId: '870623b1736406370677f756255301',
+      referenceId: '870623k177027341669843a88950ba',
       state: JSON.stringify({ autoClose }),
       theme: 'light',
       addInfo: {
@@ -145,7 +145,7 @@ function Login() {
                 <div className="flex justify-center">
                   {/* MSG91 Auth Widget */}
                   <div
-                    id="870623b1736406370677f756255301"
+                    id="870623k177027341669843a88950ba"
                   />
                 </div>
                 {/* Security Badge */}
