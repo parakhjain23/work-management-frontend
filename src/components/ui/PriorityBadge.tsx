@@ -29,7 +29,7 @@ export function PriorityBadge({ priority, className }: PriorityBadgeProps) {
             className
         )}>
             <Icon size={12} strokeWidth={2.5} />
-            <span>{priority}</span>
+            <span>{priority || 'N/A'}</span>
         </div>
     );
 }

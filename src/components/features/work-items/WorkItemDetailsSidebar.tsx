@@ -368,8 +368,9 @@ export function WorkItemDetailsSidebar() {
                                                     ) : (
                                                         <input
                                                             type={field.dataType === 'number' ? 'number' : 'text'}
-                                                            value={currentValue}
-                                                            onChange={(e) => handleCustomFieldUpdate(field.id, e.target.value, field.dataType)}
+                                                            defaultValue={currentValue}
+                                                            key={currentValue}
+                                                            onBlur={(e) => handleCustomFieldUpdate(field.id, e.target.value, field.dataType)}
                                                             className="input input-sm input-bordered rounded-xl text-xs font-medium bg-base-100/50 border-base-content/10 focus:border-primary w-full"
                                                             placeholder={`Enter ${field.name}`}
                                                         />
